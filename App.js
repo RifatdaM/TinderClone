@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   Image,
@@ -28,17 +28,23 @@ const ROTATION = 40;
 
 // Main app function
 const App = () => {
+  // state profile of users
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const currentProfile = users[currentIndex];
+
   // screenWidth
-  const {width: screenWidth} = useWindowDimensions(); 
+  const {width: screenWidth} = useWindowDimensions();
 
   // OUT OF THE SCREEN
   const hiddenTranslateX = 2 * screenWidth;
 
   // Animation
   const translateX = useSharedValue(0); //-screenWidth    0     screenWidth
-  const rotate = useDerivedValue(() => interpolate(
-      translateX.value, [0, hiddenTranslateX], [0, ROTATION],
-    ) + 'deg',); //-60deg          0deg  60deg
+  const rotate = useDerivedValue(
+    () =>
+      interpolate(translateX.value, [0, hiddenTranslateX], [0, ROTATION]) +
+      'deg',
+  ); //-60deg          0deg  60deg
 
   const cardStyle = useAnimatedStyle(() => ({
     transform: [
@@ -65,9 +71,11 @@ const App = () => {
   // Mobile View
   return (
     <View style={styles.pageContainer}>
+      
+
       <PanGestureHandler onGestureEvent={gestureHendler}>
         <Animated.View style={[styles.animatedCard, cardStyle]}>
-          <Card user={users[0]} />
+          <Card user={currentProfile} />
         </Animated.View>
       </PanGestureHandler>
     </View>
@@ -83,6 +91,12 @@ const styles = StyleSheet.create({
   },
   animatedCard: {
     width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+  nextCardContainer: {
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
   },
